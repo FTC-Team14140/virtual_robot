@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Example OpMode. Demonstrates use of gyro, color sensor, encoders, and telemetry.
  *
  */
-@TeleOp(name = "Coach", group = "Crash Test")
-public class CoachAuto extends LinearOpMode {
+@TeleOp(name = "Ava", group = "Crash Test")
+public class Ava extends LinearOpMode {
 
     public void runOpMode() {
 
@@ -24,8 +24,7 @@ public class CoachAuto extends LinearOpMode {
         //  crashBot.Drive(<Left Motor Power>, <Right Motor Power>, <milliseconds>);
         //      e.g. crashBot.Drive(50,50,1000); // Drive forward at 50% power for 1 second
 
-        crashBot.Drive(50,50,1000);
-
+        crashBot.Drive(50, 50, 1000);
         /////////////////////////////////////////////////////////
     }
 }
