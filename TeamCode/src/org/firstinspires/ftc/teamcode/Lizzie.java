@@ -25,6 +25,10 @@ public class Lizzie extends LinearOpMode {
         //      e.g. crashBot.Drive(50,50,1000); // Drive forward at 50% power for 1 second
 
         crashBot.Drive(50,50,1000);
+        crashBot.Drive(-50,50,448);
+        crashBot.Drive(50,50,4000);
+        crashBot.Drive(50,-50,450);
+        crashBot.Drive(50,50,3535);
 
         /////////////////////////////////////////////////////////
     }
