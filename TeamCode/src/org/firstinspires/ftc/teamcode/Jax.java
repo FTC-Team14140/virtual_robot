@@ -23,7 +23,8 @@ public class Jax extends LinearOpMode {
         // Your Code Goes Here.  Methods you can call:
         //  crashBot.Drive(<Left Motor Power>, <Right Motor Power>, <milliseconds>);
         //      e.g. crashBot.Drive(50,50,1000); // Drive forward at 50% power for 1 second
-        crashBot.Drive(50,50,1000);
+        crashBot.Drive(30,-30,450);
+        crashBot.Drive(50,50,10000);
 
         /////////////////////////////////////////////////////////
     }
