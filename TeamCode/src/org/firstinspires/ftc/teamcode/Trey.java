@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Example OpMode. Demonstrates use of gyro, color sensor, encoders, and telemetry.
  *
  */
-@TeleOp(name = "Coach", group = "Crash Test")
+@TeleOp(name = "Trey", group = "Crash Test")
 public class Trey extends LinearOpMode {
 
     public void runOpMode() {
