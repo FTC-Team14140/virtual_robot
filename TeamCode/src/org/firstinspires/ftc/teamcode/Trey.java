@@ -26,6 +26,7 @@ public class Trey extends LinearOpMode {
 
         crashBot.Drive(30,0,900);
         crashBot.Drive(50,50,4000);
+        crashBot.Drive(30,0,900);
         /////////////////////////////////////////////////////////
     }
 }
