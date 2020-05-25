@@ -24,7 +24,8 @@ public class Ava extends LinearOpMode {
         //  crashBot.Drive(<Left Motor Power>, <Right Motor Power>, <milliseconds>);
         //      e.g. crashBot.Drive(50,50,1000); // Drive forward at 50% power for 1 second
 
-        crashBot.Drive(50, 50, 1000);
+        crashBot.Drive(50,0, 900);
+        crashBot.Drive(50,50, 4000);
         /////////////////////////////////////////////////////////
     }
 }
