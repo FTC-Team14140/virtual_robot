@@ -43,4 +43,16 @@ public class CrashBot {
         left.setPower(0);
         right.setPower(0);
     }
+
+    void Drive(int leftPower, int rightPower) {
+        left.setPower(leftPower);
+        right.setPower(rightPower);
+    }
+
+    boolean onRed() {
+        return colorSensor.red() > colorSensor.blue() *2;
+    }
+    boolean onBlue() {
+        return colorSensor.blue() > colorSensor.red() *2;
+    }
 }

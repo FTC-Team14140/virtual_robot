@@ -21,10 +21,12 @@ public class CoachAuto extends LinearOpMode {
 
         /////////////////////////////////////////////////////////
         // Your Code Goes Here.  Methods you can call:
-        //  crashBot.Drive(<Left Motor Power>, <Right Motor Power>, <milliseconds>);
-        //      e.g. crashBot.Drive(50,50,1000); // Drive forward at 50% power for 1 second
+        //  crashBot.Drive(<Left Motor Power>, <Right Motor Power>, <milliseconds>); // drive motors at specified power (1-100) for specified milliseconds
+        //  crashBot.Drive(<Left Motor Power>, <Right Motor Power>); // set motors to specified power (1-100)
+        //  crashBot.OnBlue(); // return true if color sensor is over a blue object
+        //  crashBot.OnRed(); // return true if color sensor is over a red object
 
-        crashBot.Drive(50,50,1000);
+
 
         /////////////////////////////////////////////////////////
     }
