@@ -29,6 +29,7 @@ public class Trey extends LinearOpMode {
         //  crashBot.OnRed(); // return true if color sensor is over a red object
 
         while(!crashBot.onRed() && !crashBot.onBlue()) {
+
             crashBot.onBlue();
             crashBot.onRed();
             crashBot.Drive(50, 50);
