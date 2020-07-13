@@ -16,26 +16,17 @@ public class Ruslana extends LinearOpMode {
 
     public double degreesToMoveAt = 0;
     public double milliSeconds = 1000;
+    Servo servoBoi;
+    ServoControl servoControl;
 
     public void runOpMode() {
 
-        MechBot mecanumBoy = new MechBot();
 
-        telemetry.addData("Press Start to Continue","");
-        telemetry.update();
-        mecanumBoy.init();
+        servoBoi = hardwareMap.servo.get("servoBoi");
+        servoControl = new ServoControl(servoBoi, 0.16);
+        servoBoi.setPosition(0.3);
+        System.out.println("WHIHIHIHI");
 
-        if(gamepad1.dpad_up){
-            degreesToMoveAt+=5;
-        } else if(gamepad1.dpad_down){
-            degreesToMoveAt-=5;
-        }
-
-        if(gamepad1.dpad_right){
-            milliSeconds+=500;
-        } else if(gamepad1.dpad_left){
-            milliSeconds-=500;
-        }
 
         waitForStart();
 
@@ -44,7 +35,7 @@ public class Ruslana extends LinearOpMode {
         //for instance:
             //0 degrees causes robot to move FORWARD
             //90 degrees causes robot to move LEFT
-        mecanumBoy.timedDriveToHeading(milliSeconds, degreesToMoveAt);
+        servoControl.runToPosition(360, 0.7);
 
 
 
