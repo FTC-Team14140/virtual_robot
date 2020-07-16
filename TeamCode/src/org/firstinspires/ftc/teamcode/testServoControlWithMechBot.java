@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,17 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-import android.graphics.Color;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import virtual_robot.util.AngleUtils;
 
 /**
  * Example Autonomous Opmode
@@ -45,7 +37,7 @@ public class testServoControlWithMechBot extends LinearOpMode {
     Servo backServo;
     ServoControl backServoControl;
     double maxUnloadSpeed = 0.16;
-    double targetBackServoPosition = 0.5;
+    double targetBackServoPosition = 1.0;
     int degreesPerSec = 300;
 
     public void runOpMode() {
@@ -89,7 +81,7 @@ public class testServoControlWithMechBot extends LinearOpMode {
 
 
             if (gamepad1.a) {
-                backServoControl.runToPosition(degreesPerSec, targetBackServoPosition);
+                backServoControl.runToPosition(degreesPerSec, 600, targetBackServoPosition);
                 telemetry.addData("backServo position after call: ", backServo.getPosition());
             }
 

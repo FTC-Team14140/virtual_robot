@@ -35,7 +35,7 @@ public class Ruslana extends LinearOpMode {
         //for instance:
             //0 degrees causes robot to move FORWARD
             //90 degrees causes robot to move LEFT
-        servoControl.runToPosition(360, 0.7);
+        servoControl.runToPosition(360, 100, 0.7);
 
 
 
