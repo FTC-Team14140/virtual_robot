@@ -78,16 +78,11 @@ public class ServoControl {
         double targetMaxVelocity; //the max velocity the servo reaches after acceleration phase
         double totalTime; //total time for entire movement
         double accelTime; //time for servo acceleration phase
-        double changeInPosition; //change in position every moment in time(constantly updated during while loop)
-        long startTime = System.currentTimeMillis();
-        long now = System.currentTimeMillis();
 
-        //THESE THREE VARIABLES ARE PURELY FOR LOGGING VALUES OF POSITION OVER TIME, THEY HAVE NOTHING TO DO WITH ACTUAL OPERATION
-        final int timeInterval = 15; //every 15 milliseconds, report position of servo
-        int intervalNumber = 1; //every a position is logged in a particular phase, this number is updated
-        long recordTime = startTime; //constantly updated, keeps track of time position was logged
 
         //The target max velocity that can be reached is sqrt(accel * distance), read notes for explanation on formula
+
+        targetMaxVelocity = Math.sqrt(maxAngAccel * (Math.abs(distance * RANGE_OF_SERVO_IN_DEGREES)));
 
         //IF THE TARGET MAX VELOCITY IS GREATER THAN THE MAXIMUM DEGREES PER SECOND WE PASSED IN:
         //that means there's a period of time where we can cruise in the middle, since we are able to reach the maximum speed passed in
@@ -99,187 +94,42 @@ public class ServoControl {
         //thus, a velocity-time graph of this movement would resemble a triangle
         //a phase of acceleration followed immediately by a phase of deceleration
 
-        targetMaxVelocity = Math.sqrt(maxAngAccel * (Math.abs(distance * RANGE_OF_SERVO_IN_DEGREES)));
-
 
         if (targetMaxVelocity <= cruiseVelocity) {
             //CANNOT CRUISE, TRIANGLE TIME
-
             totalTime = 2 * targetMaxVelocity / maxAngAccel * 1000;
             //time = v/a seconds(SEE NOTES FOR FORMULA),
             // multiplied by 1000 to convert into milliseconds
-
             accelTime = totalTime / 2;
             System.out.println("can't get to cruising, oh well :C");
 
-            //------------------------------ACCELERATION----------------------------------------------
-
             System.out.println("Accel phase!");
-            while (now < startTime + accelTime) {
-                changeInPosition = calculateDistance(0, maxAngAccel, now-startTime)/RANGE_OF_SERVO_IN_DEGREES;
-//                changeInPosition = ((0.5 * maxAngAccel * Math.pow((now - startTime) / 1000.0, 2)) / RANGE_OF_SERVO_IN_DEGREES);
-                //1/2 * at^2 <-- distance formula given acceleration hahha, see notes for info
-
-                if (positiveDirection) {
-                    servo.setPosition(initialPosition + changeInPosition);
-                } else {
-                    servo.setPosition(initialPosition - changeInPosition);
-                }
-
-                //LOGGING THE NUMBERS
-                if (now > recordTime + timeInterval) {
-                    System.out.println("acc interval " + intervalNumber + " of " + (timeInterval) / 1000.0 + " sec, position: " + servo.getPosition());
-                    recordTime = System.currentTimeMillis();
-                    intervalNumber++;
-                }
-                now = System.currentTimeMillis();
-            }
-            System.out.println("FINAL VELOCITY OF ACC PHASE: " + targetMaxVelocity);
-
-            //------------------------------END OF ACCELERATION----------------------------------------------
-
-            //RESET NUMBERS IN PREP FOR NEXT PHASE
-            initialPosition = servo.getPosition();
-            startTime = System.currentTimeMillis();
-            now = System.currentTimeMillis();
-            intervalNumber = 1;
-
-            //------------------------------DECELERATION----------------------------------------------
-
+            accelerateServo(accelTime, 0, maxAngAccel, positiveDirection, true);
             System.out.println("Decel phase!");
-            while (now < startTime + accelTime) {
-                changeInPosition = calculateDistance(targetMaxVelocity, -maxAngAccel, now-startTime)/RANGE_OF_SERVO_IN_DEGREES;
-//                changeInPosition = (targetMaxVelocity * ((now - startTime) / 1000.0) - (0.5 * maxAngAccel * Math.pow((now - startTime) / 1000.0, 2)))
-//                        / RANGE_OF_SERVO_IN_DEGREES;
-                // vt - at^2/2 --> yet another distance formula, same as last one, but there's an initial velocity this time(see notes)
+            accelerateServo(accelTime, targetMaxVelocity, -maxAngAccel, positiveDirection, true );
 
-                if (positiveDirection) {
-                    servo.setPosition(initialPosition + changeInPosition);
-                } else {
-                    servo.setPosition(initialPosition - changeInPosition);
-                }
-
-
-                //LOGGING THE NUMBERS
-                if (now > recordTime + timeInterval) {
-                    System.out.println("acc interval " + intervalNumber + " of " + (timeInterval) / 1000.0 + " sec, position: " + servo.getPosition());
-                    recordTime = System.currentTimeMillis();
-                    intervalNumber++;
-                }
-                now = System.currentTimeMillis();
-            }
-            //------------------------------END OF DECELERATION----------------------------------------------
             System.out.println("TRIANGLE GRAPH!!!");
             System.out.println("FINAL POS: " + servo.getPosition());
             System.out.println("ACCEL TIME: " + accelTime / 1000);
             System.out.println("DECEL TIME: " + accelTime / 1000);
             System.out.println("TIME TAKEN: " + totalTime);
-
             System.out.println("//////////////////////////////////////////");
-
-
-        } else {
+        }
+        else {
             //CAN CRUISE, TRAPEZOID TIME
             System.out.println("can cruise");
-
             targetMaxVelocity = cruiseVelocity;
-
             accelTime = targetMaxVelocity / maxAngAccel * 1000; //see notes for formula
             totalTime = Math.abs(distance*RANGE_OF_SERVO_IN_DEGREES / targetMaxVelocity * 1000) + accelTime; //see notes for formula
             double cruiseTime = totalTime - 2 * accelTime;
             System.out.println("CRUISE TIME: " + cruiseTime);
 
-            //------------------------------ACCELERATION----------------------------------------------
-
             System.out.println("Accel phase!");
-            while (now < startTime + accelTime) {
-                changeInPosition = calculateDistance(0, maxAngAccel, now-startTime)/RANGE_OF_SERVO_IN_DEGREES;
-//                changeInPosition = ((0.5 * maxAngAccel * Math.pow((now - startTime) / 1000.0, 2)) / RANGE_OF_SERVO_IN_DEGREES);
-                //1/2 * at^2 <-- distance formula given acceleration hahha, see notes for info
-
-                if (positiveDirection) {
-                    servo.setPosition(initialPosition + changeInPosition);
-                } else {
-                    servo.setPosition(initialPosition - changeInPosition);
-                }
-
-                //LOGGING THE NUMBERS
-                if (now > recordTime + timeInterval) {
-                    System.out.println("acc interval " + intervalNumber + " of " + (timeInterval) / 1000.0 + " sec, position: " + servo.getPosition());
-                    recordTime = System.currentTimeMillis();
-                    intervalNumber++;
-                }
-                now = System.currentTimeMillis();
-
-            }
-            System.out.println("FINAL VELOCITY OF ACC PHASE: " + targetMaxVelocity);
-
-            //------------------------------END OF ACCELERATION----------------------------------------------
-
-            //RESET NUMBERS IN PREP FOR NEXT PHASE
-            initialPosition = servo.getPosition();
-            startTime = System.currentTimeMillis();
-            now = System.currentTimeMillis();
-            intervalNumber = 1;
-
-            //------------------------------CRUISING----------------------------------------------
-
+            accelerateServo(accelTime, 0, maxAngAccel, positiveDirection, true);
             System.out.println("Cruise phase!");
-            while (now < startTime + cruiseTime) {
-                changeInPosition = calculateDistance(targetMaxVelocity, 0, now-startTime)/RANGE_OF_SERVO_IN_DEGREES;
-//                changeInPosition = ((0.5 * maxAngAccel * Math.pow((now - startTime) / 1000.0, 2)) / RANGE_OF_SERVO_IN_DEGREES);
-                //1/2 * at^2 <-- distance formula given acceleration hahha, see notes for info
-
-                if (positiveDirection) {
-                    servo.setPosition(initialPosition + changeInPosition);
-                } else {
-                    servo.setPosition(initialPosition - changeInPosition);
-                }
-
-                //LOGGING THE NUMBERS
-                if (now > recordTime + timeInterval) {
-                    System.out.println("cru interval " + intervalNumber + " of " + (timeInterval) / 1000.0 + " sec, position: " + servo.getPosition());
-                    recordTime = System.currentTimeMillis();
-                    intervalNumber++;
-                }
-                now = System.currentTimeMillis();
-
-            }
-
-            //------------------------------END OF CRUISING----------------------------------------------
-
-            //RESET NUMBERS IN PREP FOR NEXT PHASE
-            initialPosition = servo.getPosition();
-            startTime = System.currentTimeMillis();
-            now = System.currentTimeMillis();
-            intervalNumber = 1;
-
-            //------------------------------DECELERATION----------------------------------------------
-
+            accelerateServo(cruiseTime, targetMaxVelocity, 0, positiveDirection, true);
             System.out.println("Decel phase!");
-            while (now < startTime + accelTime) {
-                changeInPosition = calculateDistance(targetMaxVelocity, -maxAngAccel, now-startTime)/RANGE_OF_SERVO_IN_DEGREES;
-//                changeInPosition = (targetMaxVelocity * ((now - startTime) / 1000.0) - (0.5 * maxAngAccel * Math.pow((now - startTime) / 1000.0, 2)))
-//                        / RANGE_OF_SERVO_IN_DEGREES;
-                // vt - at^2/2 --> yet another distance formula, same as last one, but there's an initial velocity this time(see notes)
-
-                if (positiveDirection) {
-                    servo.setPosition(initialPosition + changeInPosition);
-                } else {
-                    servo.setPosition(initialPosition - changeInPosition);
-                }
-
-                //LOGGING NUMBERS
-                if (now > recordTime + timeInterval) {
-                    System.out.println("dec interval " + intervalNumber + " of " + (timeInterval) / 1000.0 + " sec, position: " + servo.getPosition());
-                    recordTime = System.currentTimeMillis();
-                    intervalNumber++;
-                }
-                now = System.currentTimeMillis();
-            }
-            //------------------------------END OF DECELERATION----------------------------------------------
-
-
+            accelerateServo(accelTime, targetMaxVelocity, -maxAngAccel, positiveDirection, true );
 
             System.out.println("TRAPEZOID GRAPH!!!");
             System.out.println("FINAL POS: " + servo.getPosition());
@@ -287,15 +137,9 @@ public class ServoControl {
             System.out.println("CRUISE TIME: " + cruiseTime / 1000);
             System.out.println("DECEL TIME: " + accelTime / 1000);
             System.out.println("TIME TAKEN: " + totalTime);
-
             System.out.println("//////////////////////////////////////////");
 
-
-
         }
-
-
-
     }
 
 
@@ -305,7 +149,35 @@ public class ServoControl {
 
     public void accelerateServo(double movementTimeInMilliseconds, double initialVelocity, double acceleration, boolean positiveDirection, boolean positionDetails){
 
+        double changeInPosition;
+        double initialPosition = servo.getPosition();
+        long startTime = System.currentTimeMillis();
+        long recordTime = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
 
+        final int timeInterval = 15; //every 15 milliseconds, report position of servo
+        int intervalNumber = 1; //every a position is logged in a particular phase, this number is updated
+
+        while (now < startTime + movementTimeInMilliseconds) {
+            changeInPosition = calculateDistance(initialVelocity, acceleration, now-startTime)/RANGE_OF_SERVO_IN_DEGREES;
+
+            if (positiveDirection) {
+                servo.setPosition(initialPosition + changeInPosition);
+            } else {
+                servo.setPosition(initialPosition - changeInPosition);
+            }
+
+            //LOGGING NUMBERS
+            if(positionDetails){
+                if (now > recordTime + timeInterval) {
+                    System.out.println("interval " + intervalNumber + " of " + (timeInterval) / 1000.0 + " sec, position: " + servo.getPosition());
+                    recordTime = System.currentTimeMillis();
+                    intervalNumber++;
+                }
+
+            }
+            now = System.currentTimeMillis();
+        }
 
     }
 
@@ -313,6 +185,15 @@ public class ServoControl {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 runToPosition(degreesPerSec, targetPosition);
+            }
+        });
+        thread.start();
+    }
+
+    public void runToPositionNoWait(final double degreesPerSec, final double maxAngAccel, final double targetPosition) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                runToPosition(degreesPerSec, maxAngAccel, targetPosition);
             }
         });
         thread.start();
